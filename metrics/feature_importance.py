@@ -27,10 +27,13 @@ def gbdt_shap_importance(model, raw_data, feature_names):
     """
     explainer = shap.TreeExplainer(model)
     shap_values = explainer.shap_values(raw_data[feature_names])
+    # feature top pic
+    shap.initjs()
+    shap.summary_plot(shap_values, raw_data[feature_names])
+    # format result as pd.DataFrame()
     fea_importance_df = pd.DataFrame(shap_values)
     fea_importance_df.columns = feature_names
     fea_importance_df = fea_importance_df.apply(lambda x: np.abs(x).sum())
     df_feature_importance_shap = fea_importance_df.reset_index(name='value').rename(columns={'index': 'feature'})
     df_feature_importance_shap.sort_values(by='value', ascending=False, inplace=True)
     return df_feature_importance_shap
-
